@@ -4,77 +4,51 @@ import Card from '../../components/Card'
 
 
 function Home() {
+  const [user, setUser] = useState();
+  const [gitUser, setGitUser] = useState([]);
 
-  // create state for reflecting changes on the user interface
-  const [studentName, setName] = useState();
-  const [students, setStudent] = useState([]);
-  const [gitUser, setGitUser] = useState({name: '', avatar: ''});
-  
-  function handleAddStudent() {
-    const newStudent = {
-      name: studentName,
-      time: new Date().toLocaleTimeString("pt-br", {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
+  async function fetchGitApi () {
+    const response = await fetch(`https://api.github.com/users/${user}`);
+    const data = await response.json();
+    console.log(data);
+
+    const newUser = {
+      id: data.id,
+      name: data.name,
+      avatar: data.avatar_url,
+      bio: data.bio
     }
 
-    // ... spread operator
-    setStudent(prevState => [...prevState, newStudent]);
-    // ['rodrigo']
-    // [['rodrigo'], amanda]
-    // ... spread operator -> [rodrigo, amanda]
+    setGitUser(prevState => [...prevState, newUser]);
   }
 
-  // useEffect is called on first rendering page.
-  // [] It's an array dependencies. Empty means useEffect will be called single time
-  // [] Store states
-  useEffect(() => {
-
-    async function fetchData () {
-      const response = await fetch("https://api.github.com/users/tarcioreis");
-      const data = await response.json();
-      console.log(data);
-      setGitUser({
-        name: data.name,
-        avatar: data.avatar_url
-      });
-    }
-
-    fetchData();
-  }, [])
 
   return (
-    // <> it's a fragment to wrapper all elements.
-    <div className='container'>
-
+    <div className="container">
       <header>
-        <h1>Lista de presença</h1>
-
-        <div>
-          <strong> {gitUser.name} </strong>
-          <img src={gitUser.avatar} alt="Foto de perfil" />
-        </div>
+        <h1>GitHub users</h1>
       </header>
 
-      <input type="text"
-      placeholder="Digite o nome"
-      onChange={ (e) => setName(e.target.value) }
+      <input
+      type='text'
+      placeholder='Digite o nome de usuário no GitHub'
+      onChange={ (e) => setUser(e.target.value)}
       />
 
-      <button type="button" onClick={handleAddStudent}>Adicionar</button>
-      
+      <button onClick={fetchGitApi}>Adicionar</button>
+
       {
-        students.map( (student) => 
+        gitUser.map( user => 
           <Card
-            key={student.time}
-            name={student.name}
-            time={student.time}
+            key={user.id}
+            name={user.name}
+            avatar={user.avatar}
+            bio={user.bio}
           />
         )
       }
-      
+
+
     </div>
   )
 }

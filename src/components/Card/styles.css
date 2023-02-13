@@ -2,8 +2,8 @@
     height: 100px;
     width: 50%;
 
-    background-color: blue;
-    color: #FFF;
+    background-color: #FFF;
+    border-bottom: 1px solid #eee;
 
     border-radius: 10px;
     margin-bottom: 20px;
@@ -13,6 +13,7 @@
     justify-content: space-between;
     padding: 24px;
 }
+
 
 .card strong {
     font-size: 18px;
